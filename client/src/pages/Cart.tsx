@@ -59,7 +59,7 @@ const Cart = () => {
         </button>
 
         {items.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-48">
             <h2 className="text-3xl font-bold mb-4">Cart kosong</h2>
             <p className="text-gray-600 mb-6">Ayo mulai belanja!</p>
             <button
@@ -114,9 +114,12 @@ const Cart = () => {
                   <span>Total</span>
                   <span>Rp {totalPrice.toLocaleString('id-ID')}</span>
                 </div>
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mt-4">
-                  Lanjut ke Checkout
-                </button>
+                <button 
+              onClick={() => navigate('/checkout')}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mt-4"
+            >
+              Lanjut ke Checkout
+            </button>
               </div>
             </div>
           </div>
