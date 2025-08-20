@@ -10,6 +10,7 @@ interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  weight: number;
 }
 
 const ProductDetail = () => {
@@ -44,7 +45,8 @@ const ProductDetail = () => {
           name: product.name,
           price: product.price,
           image: product.image,
-          quantity: quantity
+          quantity: quantity,
+          weight: product.weight
         });
       }
       
