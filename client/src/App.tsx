@@ -5,6 +5,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import AuthPage from "./pages/auth/AuthPage";
 import Seller from "./pages/Seller"; // Import Seller component
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/auth/:pathname?" element={<AuthPage />} />
       <Route path="/seller" element={<Seller />} /> {/* Add route for Seller page */}
+      <Route path="/homepage" element={<HomePage />} />
     </Routes>
   );
 }
