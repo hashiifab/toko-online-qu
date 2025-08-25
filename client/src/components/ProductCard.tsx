@@ -1,9 +1,20 @@
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   image: string;
   description: string;
+  weight: number;
+  volume: number;
+  length: number;
+  width: number;
+  height: number;
+  userId: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
 }
 
 const ProductCard = ({
@@ -11,7 +22,7 @@ const ProductCard = ({
   onClick,
 }: {
   product: Product;
-  onClick: (id: number) => void;
+  onClick: (id: string) => void;
 }) => {
   return (
     <div
@@ -29,7 +40,9 @@ const ProductCard = ({
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
           {product.name}
         </h3>
-        <p className="text-xl font-bold text-blue-600">Rp {product?.price.toLocaleString("id-ID")}</p>
+        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
+        <p className="text-xl font-bold text-blue-600 mb-1">Rp {product.price.toLocaleString("id-ID")}</p>
+        <p className="text-xs text-gray-500">Penjual: {product.user.name}</p>
       </div>
     </div>
   );

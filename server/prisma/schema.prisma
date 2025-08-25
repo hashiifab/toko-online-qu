@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../../generated/prisma"
 }
 
 datasource db {
@@ -20,12 +19,104 @@ model Payment {
   invoice_url String?
   invoice_id  String        @unique
   product     String
+  productId   String?
+  sellerId    String?
   amount      Float
   qty         Int
+  buyerName   String?
+  buyerEmail  String?
+  buyerPhone  String?
+  shippingAddress String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
 }
 
 enum PaymentStatus {
   PENDING
   PAID
   EXPIRED
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  price            Float
+  image            String
+  description      String
+  weight           Float
+  volume           Float
+  length           Float
+  width            Float
+  height           Float
+  shippingOriginId String
+  shippingOriginName String
+  shippingOriginCode String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  userId           String
+  user             Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Users {
+  id                    String     @id
+  name                  String
+  email                 String
+  emailVerified         Boolean
+  image                 String?
+  shippingOriginId      String?
+  shippingOriginName    String?
+  shippingOriginCode    String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  sessionss             Sessions[]
+  accountss             Accounts[]
+  products              Product[]
+
+  @@unique([email])
+  @@map("users")
+}
+
+model Sessions {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("sessions")
+}
+
+model Accounts {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  users                 Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("accounts")
+}
+
+model Verifications {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verifications")
 }

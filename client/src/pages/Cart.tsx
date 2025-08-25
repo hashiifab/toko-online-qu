@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2 } from "lucide-react"; // buang ShoppingCart biar gak bikin bingung
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import Header from "../components/Header";
 
 type CartItem = {
   id: number;
@@ -51,12 +52,7 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm mb-4">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Toko Online Qu</h1>
-        </div>
-      </header>
+      <Header />
 
       <div className="container mx-auto p-4">
         {/* Tombol Back */}

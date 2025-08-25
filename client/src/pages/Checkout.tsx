@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
-import { shippingOrigin } from "../data/mockProducts";
+import { ArrowLeft } from "lucide-react";
+
+import Header from "../components/Header";
+import OrderSummary from "../components/pages/checkout/OrderSummary";
+import ShippingForm from "../components/pages/checkout/ShippingForm";
+import CustomerInfoForm from "../components/pages/checkout/CustomerInfoForm";
 
 // Data barang di keranjang
 interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
   weight: number;
+  shippingOriginCode: string;
+  shippingOriginName: string;
 }
 
 // Data pelanggan
@@ -44,6 +50,17 @@ interface ShippingService {
   service: string;
   cost: number;
   etd: string;
+  originCode: string;
+}
+
+// Data grup pengiriman berdasarkan origin
+interface ShippingGroup {
+  originCode: string;
+  originName: string;
+  items: CartItem[];
+  totalWeight: number;
+  services: ShippingService[];
+  selectedService?: ShippingService;
 }
 
 // Tipe untuk respons API ongkos kirim
@@ -67,6 +84,26 @@ interface ApiResponse {
   data: ApiCourier[];
 }
 
+// Tipe untuk respons API produk
+interface ProductResponse {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  weight: number;
+  shippingOriginCode: string;
+  shippingOriginName: string;
+  userId: string;
+}
+
+// Tipe untuk respons API pembayaran
+interface PaymentResponse {
+  success: boolean;
+  data: {
+    invoice_url: string;
+  };
+}
+
 const Checkout = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -86,21 +123,61 @@ const Checkout = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Location[]>([]);
   const [shippingCost, setShippingCost] = useState(0);
-  const [shippingServices, setShippingServices] = useState<ShippingService[]>(
-    []
-  );
-  const [selectedService, setSelectedService] =
-    useState<ShippingService | null>(null);
+  const [shippingGroups, setShippingGroups] = useState<ShippingGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Ambil data keranjang dari localStorage
+  // Ambil data keranjang dari localStorage dan update dengan data terbaru dari API
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart as string));
-    } else {
-      navigate("/cart");
-    }
+    const loadCartItems = async () => {
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        const cartData = JSON.parse(savedCart as string);
+        console.log("Raw cart data:", cartData);
+        
+        // Periksa apakah ada item yang tidak memiliki shippingOriginCode, shippingOriginName, atau weight yang tidak valid
+        const itemsNeedingUpdate = cartData.filter((item: CartItem) => 
+          !item.shippingOriginCode || !item.shippingOriginName || !item.weight || item.weight <= 0
+        );
+        
+        if (itemsNeedingUpdate.length > 0) {
+          console.log("Items needing update:", itemsNeedingUpdate);
+          
+          // Ambil data terbaru dari API untuk semua item yang perlu update
+          const updatedItems = await Promise.all(
+            cartData.map(async (item: CartItem) => {
+              if (!item.shippingOriginCode || !item.shippingOriginName || !item.weight || item.weight <= 0) {
+                try {
+                  const response = await fetch(`/api/products/${item.id}`);
+                  if (response.ok) {
+                    const productData: ProductResponse = await response.json();
+                    console.log(`Updated product data for ${item.name}:`, productData);
+                    return {
+                      ...item,
+                      shippingOriginCode: productData.shippingOriginCode || "JKT",
+                      shippingOriginName: productData.shippingOriginName || "Unknown City",
+                      weight: productData.weight || 0.1
+                    };
+                  }
+                } catch (error) {
+                  console.error(`Failed to fetch product ${item.id}:`, error);
+                }
+              }
+              return item;
+            })
+          );
+          
+          // Update localStorage dengan data terbaru
+          localStorage.setItem("cart", JSON.stringify(updatedItems));
+          setCartItems(updatedItems);
+        } else {
+          setCartItems(cartData);
+        }
+      } else {
+        navigate("/cart");
+      }
+    };
+    
+    loadCartItems();
   }, [navigate]);
 
   // Update data pelanggan
@@ -126,6 +203,47 @@ const Checkout = () => {
     }
   };
 
+  // Kelompokkan item berdasarkan origin code
+  const groupItemsByOrigin = (): ShippingGroup[] => {
+    const groups: { [key: string]: ShippingGroup } = {};
+    
+    console.log("Cart items for grouping:", cartItems);
+    
+    cartItems.forEach(item => {
+      const originCode = item.shippingOriginCode || "JKT";
+      console.log(`Item ${item.name} has origin code: ${originCode}, name: ${item.shippingOriginName}, weight: ${item.weight}kg, quantity: ${item.quantity}`);
+      
+      if (!groups[originCode]) {
+        groups[originCode] = {
+          originCode,
+          originName: item.shippingOriginName || "Unknown City",
+          items: [],
+          totalWeight: 0,
+          services: []
+        };
+      }
+      groups[originCode].items.push(item);
+      
+      const itemWeight = typeof item.weight === 'number' ? item.weight : 0;
+      groups[originCode].totalWeight += item.quantity * itemWeight;
+      
+      console.log(`Added ${item.name} to group ${originCode}. Group total weight: ${groups[originCode].totalWeight}kg`);
+    });
+    
+    console.log("Final grouped items:", groups);
+    
+    const validGroups = Object.values(groups).filter(group => {
+      if (group.totalWeight <= 0) {
+        console.warn(`Group ${group.originCode} has invalid weight: ${group.totalWeight}kg`);
+        return false;
+      }
+      return true;
+    });
+    
+    console.log("Valid groups after filtering:", validGroups);
+    return validGroups;
+  };
+
   // Pilih kota
   const handleLocationSelect = (location: Location) => {
     setShippingInfo({
@@ -137,51 +255,125 @@ const Checkout = () => {
     });
     setSearchResults([]);
     setSearchQuery(location.fullName);
-    setShippingServices([]);
+    setShippingGroups([]);
     setShippingCost(0);
-    setSelectedService(null);
   };
 
-  // Hitung ongkos kirim
+  // Hitung ongkos kirim untuk semua grup origin
   const calculateShipping = async () => {
-    setIsLoading(true); // Mulai loading
+    setIsLoading(true);
     try {
-      const weight =
-        cartItems.reduce(
-          (total, item) => total + item.quantity * item.weight,
-          0
-        ) / 1000;
-      const response = await fetch("/api/shipping/cost", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          origin_code: shippingOrigin.code,
-          destination_code: shippingInfo.destinationId,
-          weight,
-          courier: shippingInfo.courier.toLowerCase() || undefined,
-        }),
-      });
-      const data: ApiResponse = await response.json();
-      const services = data.data.flatMap((courier: ApiCourier) =>
-        courier.costs.map((cost: ApiShippingCostItem) => ({
-          code: courier.code,
-          name: courier.name,
-          service: cost.service,
-          cost: cost.cost.value,
-          etd: cost.cost.etd,
-        }))
-      );
-      setShippingServices(services);
-      if (services.length > 0) {
-        setSelectedService(services[0]);
-        setShippingCost(services[0].cost);
+      const groups = groupItemsByOrigin();
+      console.log("Shipping groups:", groups);
+      
+      if (groups.length === 0) {
+        throw new Error("Tidak ada produk untuk dihitung ongkirnya");
       }
+      
+      const updatedGroups: ShippingGroup[] = [];
+      const failedOrigins: string[] = [];
+
+      for (const group of groups) {
+        try {
+          const weightInKg = group.totalWeight;
+          console.log(`Calculating shipping for origin ${group.originCode}, weight: ${weightInKg}kg`);
+          
+          const finalWeight = Math.max(weightInKg, 0.1);
+          
+          const payload = {
+            origin_code: group.originCode,
+            destination_code: shippingInfo.destinationId,
+            weight: finalWeight,
+          };
+          
+          console.log("Shipping payload:", payload);
+          
+          const response = await fetch("/api/shipping/cost", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Shipping API error for ${group.originCode}:`, errorText);
+            failedOrigins.push(`${group.originCode} (${response.status})`);
+            continue;
+          }
+          
+          const data: ApiResponse = await response.json();
+          console.log(`Shipping response for ${group.originCode}:`, data);
+          
+          if (!data.data || data.data.length === 0) {
+            console.warn(`No shipping services available for origin ${group.originCode}`);
+            failedOrigins.push(`${group.originCode} (no services)`);
+            continue;
+          }
+          
+          const services = data.data.flatMap((courier: ApiCourier) =>
+            courier.costs.map((cost: ApiShippingCostItem) => ({
+              code: courier.code,
+              name: courier.name,
+              service: cost.service,
+              cost: cost.cost.value,
+              etd: cost.cost.etd,
+              originCode: group.originCode,
+            }))
+          );
+
+          services.sort((a, b) => a.cost - b.cost);
+
+          updatedGroups.push({
+            ...group,
+            services,
+            selectedService: undefined
+          });
+        } catch (originError) {
+          console.error(`Error calculating shipping for origin ${group.originCode}:`, originError);
+          failedOrigins.push(`${group.originCode} (error)`);
+        }
+      }
+
+      if (updatedGroups.length === 0) {
+        throw new Error(`Gagal menghitung ongkir untuk semua origin: ${failedOrigins.join(", ")}`);
+      }
+
+      if (failedOrigins.length > 0) {
+        console.warn(`Some origins failed: ${failedOrigins.join(", ")}`);
+        alert(`Peringatan: Gagal menghitung ongkir untuk origin: ${failedOrigins.join(", ")}. Melanjutkan dengan origin yang berhasil.`);
+      }
+
+      setShippingGroups(updatedGroups);
+      setShippingCost(0);
     } catch (error) {
       console.error("Error calculating shipping:", error);
-      alert("Gagal menghitung ongkos kirim. Silakan coba lagi.");
+      alert(`Gagal menghitung ongkos kirim: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Handle shipping service selection
+  const handleShippingServiceSelect = (originCode: string, service: ShippingService) => {
+    const updatedGroups = shippingGroups.map(group => {
+      if (group.originCode === originCode) {
+        return { ...group, selectedService: service };
+      }
+      return group;
+    });
+    
+    setShippingGroups(updatedGroups);
+    
+    const totalCost = updatedGroups.reduce((total, group) => {
+      return total + (group.selectedService?.cost || 0);
+    }, 0);
+    
+    setShippingCost(totalCost);
+  };
+
+  // Check if all shipping services are selected
+  const allShippingServicesSelected = () => {
+    return shippingGroups.length > 0 && shippingGroups.every(group => group.selectedService);
   };
 
   // Delay pencarian kota
@@ -192,8 +384,8 @@ const Checkout = () => {
 
   // Lanjut ke langkah berikutnya
   const handleNextStep = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault(); // Mencegah reload halaman saat submit form
-    if (step === 2 && shippingServices.length === 0) {
+    if (e) e.preventDefault();
+    if (step === 2 && shippingGroups.length === 0) {
       await calculateShipping();
       return;
     }
@@ -207,6 +399,23 @@ const Checkout = () => {
   const handleSubmit = async () => {
     try {
       const totalAmount = calculateTotal();
+      
+      const firstItem = cartItems[0];
+      let sellerId: string | null = null;
+      const productId = firstItem?.id;
+      
+      if (firstItem) {
+        try {
+          const productResponse = await fetch(`/api/products/${firstItem.id}`);
+          if (productResponse.ok) {
+            const productData: ProductResponse = await productResponse.json();
+            sellerId = productData.userId;
+          }
+        } catch (error) {
+          console.error('Error fetching product data:', error);
+        }
+      }
+      
       const response = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -216,9 +425,15 @@ const Checkout = () => {
             .join(", "),
           amount: totalAmount,
           qty: cartItems.reduce((total, item) => total + item.quantity, 0),
+          productId: productId,
+          sellerId: sellerId,
+          buyerName: `${customerInfo.firstName} ${customerInfo.lastName}`.trim(),
+          buyerEmail: customerInfo.email,
+          buyerPhone: customerInfo.phone,
+          shippingAddress: shippingInfo.address,
         }),
       });
-      const data = await response.json();
+      const data: PaymentResponse = await response.json();
       if (data.success && data.data.invoice_url) {
         localStorage.removeItem("cart");
         window.location.href = data.data.invoice_url;
@@ -240,213 +455,9 @@ const Checkout = () => {
     return subtotal + shippingCost;
   };
 
-  // Formulir informasi pelanggan
-  const CustomerInfoForm = () => (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Informasi Pelanggan</h2>
-      <form onSubmit={handleNextStep}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="Nama Depan"
-            value={customerInfo.firstName}
-            onChange={handleCustomerInfoChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Nama Belakang"
-            value={customerInfo.lastName}
-            onChange={handleCustomerInfoChange}
-            className="w-full p-2 border rounded-md"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={customerInfo.email}
-            onChange={handleCustomerInfoChange}
-            className="w-full p-2 border rounded-md col-span-2"
-            required
-          />
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Nomor Telepon"
-            value={customerInfo.phone}
-            onChange={handleCustomerInfoChange}
-            className="w-full p-2 border rounded-md col-span-2"
-            required
-          />
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-          >
-            Lanjut ke Alamat Pengiriman
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-
-  // Formulir pengiriman
-  const ShippingForm = () => (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Alamat Pengiriman</h2>
-      <div className="space-y-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Cari kota tujuan..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-2 border rounded-md"
-          />
-          {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
-              {searchResults.map((location) => (
-                <div
-                  key={location.id}
-                  className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
-                  onClick={() => handleLocationSelect(location)}
-                >
-                  <div className="font-medium text-sm">{location.name}</div>
-                  <div className="text-xs text-gray-500">
-                    {location.fullName}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        {shippingServices.length > 0 && (
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-semibold mb-2">Pilih Layanan Kurir</h3>
-            <select
-              value={
-                selectedService
-                  ? `${selectedService.code}|${selectedService.service}`
-                  : ""
-              }
-              onChange={(e) => {
-                const [code, service] = e.target.value.split("|");
-                const selected = shippingServices.find(
-                  (s) => s.code === code && s.service === service
-                );
-                if (selected) {
-                  setSelectedService(selected);
-                  setShippingCost(selected.cost);
-                  setShippingInfo((prev) => ({
-                    ...prev,
-                    courier: selected.code,
-                  }));
-                } else {
-                  setSelectedService(null);
-                }
-              }}
-              className="w-full p-2 border rounded-md"
-            >
-              <option value="">Pilih Layanan</option>
-              {shippingServices.map((service) => (
-                <option
-                  key={`${service.code}|${service.service}`}
-                  value={`${service.code}|${service.service}`}
-                >
-                  {service.name} {service.service} - Rp{" "}
-                  {service.cost.toLocaleString("id-ID")} ({service.etd} hari)
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-      <div className="mt-6 flex justify-between">
-        <button
-          onClick={handlePrevStep}
-          className="text-gray-600 px-6 py-2 rounded-md border hover:bg-gray-50"
-          disabled={isLoading}
-        >
-          Kembali
-        </button>
-        <button
-          onClick={handleNextStep}
-          className={`bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 ${
-            isLoading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={
-            !shippingInfo.destinationId ||
-            (shippingServices.length > 0 && !selectedService) ||
-            isLoading
-          }
-        >
-          {isLoading
-            ? "loading..."
-            : shippingServices.length > 0 && selectedService
-            ? "Lanjut ke Konfirmasi"
-            : "Cek Ongkir"}
-        </button>
-      </div>
-    </div>
-  );
-
-  // Ringkasan pesanan
-  const OrderSummary = () => (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Ringkasan Pesanan</h2>
-      <div className="space-y-4">
-        {cartItems.map((item) => (
-          <div key={item.id} className="flex justify-between items-center">
-            <div>
-              <h3 className="font-medium">{item.name}</h3>
-              <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-            </div>
-            <p className="font-medium">
-              Rp {(item.price * item.quantity).toLocaleString("id-ID")}
-            </p>
-          </div>
-        ))}
-        <div className="border-t pt-4">
-          <div className="flex justify-between">
-            <p>Subtotal</p>
-            <p className="font-medium">
-              Rp {(calculateTotal() - shippingCost).toLocaleString("id-ID")}
-            </p>
-          </div>
-          <div className="flex justify-between mt-2">
-            <p>Ongkos Kirim</p>
-            <p className="font-medium">
-              {shippingCost > 0
-                ? `Rp ${shippingCost.toLocaleString("id-ID")}`
-                : "-"}
-            </p>
-          </div>
-          <div className="flex justify-between mt-4 text-lg font-semibold">
-            <p>Total</p>
-            <p>Rp {calculateTotal().toLocaleString("id-ID")}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm mb-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Toko Online Qu</h1>
-          <button
-            onClick={() => navigate("/cart")}
-            className="p-2 hover:bg-gray-100 rounded-full"
-          >
-            <ShoppingCart size={24} />
-          </button>
-        </div>
-      </header>
+      <Header />
       <div className="container mx-auto p-4">
         <button
           onClick={() => navigate(-1)}
@@ -480,8 +491,29 @@ const Checkout = () => {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-6">
-            {step === 1 && CustomerInfoForm()}
-            {step === 2 && ShippingForm()}
+            {step === 1 && (
+              <CustomerInfoForm 
+                customerInfo={customerInfo}
+                handleCustomerInfoChange={handleCustomerInfoChange}
+                handleNextStep={handleNextStep}
+              />
+            )}
+            {step === 2 && (
+              <ShippingForm
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                searchResults={searchResults}
+                shippingInfo={shippingInfo}
+                handleLocationSelect={handleLocationSelect}
+                shippingGroups={shippingGroups}
+                handleShippingServiceSelect={handleShippingServiceSelect}
+                isLoading={isLoading}
+                handlePrevStep={handlePrevStep}
+                handleNextStep={handleNextStep}
+                shippingCost={shippingCost}
+                allShippingServicesSelected={allShippingServicesSelected}
+              />
+            )}
             {step === 3 && (
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Pembayaran</h2>
@@ -493,7 +525,11 @@ const Checkout = () => {
                       {customerInfo.email} - {customerInfo.phone}
                     </p>
                   </div>
-                  <OrderSummary />
+                  <OrderSummary 
+                    cartItems={cartItems}
+                    calculateTotal={calculateTotal}
+                    shippingCost={shippingCost}
+                  />
                 </div>
                 <div className="flex justify-between">
                   <button
@@ -523,7 +559,13 @@ const Checkout = () => {
               </div>
             )}
           </div>
-          <div className="lg:col-span-1">{OrderSummary()}</div>
+          <div className="lg:col-span-1">
+            <OrderSummary 
+              cartItems={cartItems}
+              calculateTotal={calculateTotal}
+              shippingCost={shippingCost}
+            />
+          </div>
         </div>
       </div>
     </div>
