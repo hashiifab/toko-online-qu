@@ -155,134 +155,137 @@ const HomePage = () => {
       {/* Main Content */}
       <main>
         {/* Hero */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <div className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
-              ✨ Mainan Edukasi Premium
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-              Investasi Terbaik <br />
-              untuk Masa <br />
-              Depan Anak <br />
-              Anda
-            </h1>
-            <p className="mt-6 text-lg text-gray-600">
-              Kembangkan logika, kreativitas, dan keterampilan teknis melalui
-              mainan edukasi pilihan yang telah dipercaya ribuan keluarga
-              Indonesia.
-            </p>
-            {/* Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-start gap-4 w-full">
-              <button className="w-full sm:w-auto bg-blue-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 flex items-center justify-center">
-                Jelajahi Koleksi Kami
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </button>
-              <button className="w-full sm:w-auto bg-white text-gray-700 px-6 py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-100 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Lihat Video Demo
-              </button>
-            </div>
-
-            {/* Statistik */}
-            <div className="mt-12 flex flex-row items-center justify-center sm:justify-start gap-4 sm:gap-8 text-center overflow-x-auto">
-              <div className="flex flex-col items-center min-w-[80px]">
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  10K+
-                </p>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Keluarga Puas
-                </p>
+        <section className="bg-gradient-to-b from-blue-50/65 to-white py-30">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
+                ✨ Mainan Edukasi Premium
               </div>
-              <div className="flex flex-col items-center min-w-[80px]">
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  500+
-                </p>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Produk Premium
-                </p>
-              </div>
-              <div className="flex flex-col items-center min-w-[80px]">
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center justify-center">
-                  4.9
+              <h1 className="text-5xl md:text-6xl font-bold text-black leading-tight">
+                Investasi Terbaik <br />
+                untuk Masa <br />
+                Depan Anak <br />
+                Anda
+              </h1>
+              <p className="mt-6 text-lg text-black-100">
+                Kembangkan logika, kreativitas, dan keterampilan teknis melalui
+                mainan edukasi pilihan yang telah dipercaya ribuan keluarga
+                Indonesia.
+              </p>
+              {/* Buttons */}
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-start gap-4 w-full">
+                <button className="w-full sm:w-auto bg-blue-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 flex items-center justify-center">
+                  Jelajahi Koleksi Kami
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 sm:h-5 sm:w-5 ml-1 text-yellow-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+                    className="h-5 w-5 ml-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
-                </p>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Rating Pelanggan
-                </p>
+                </button>
+                <button className="w-full sm:w-auto bg-white text-gray-700 px-6 py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-100 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Lihat Video Demo
+                </button>
+              </div>
+
+              {/* Statistik */}
+              <div className="mt-12 flex flex-row items-center justify-center sm:justify-start gap-4 sm:gap-8 text-center overflow-x-auto">
+                <div className="flex flex-col items-center min-w-[80px]">
+                  <p className="text-2xl sm:text-3xl font-bold text-black">
+                    10K+
+                  </p>
+                  <p className="text-black-100 text-sm sm:text-base">
+                    Keluarga Puas
+                  </p>
+                </div>
+                <div className="flex flex-col items-center min-w-[80px]">
+                  <p className="text-2xl sm:text-3xl font-bold text-black">
+                    500+
+                  </p>
+                  <p className="text-black-100 text-sm sm:text-base">
+                    Produk Premium
+                  </p>
+                </div>
+                <div className="flex flex-col items-center min-w-[80px]">
+                  <p className="text-2xl sm:text-3xl font-bold text-black flex items-center justify-center">
+                    4.9
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 sm:h-5 sm:w-5 ml-1 text-yellow-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </p>
+                  <p className="text-black-100 text-sm sm:text-base">
+                    Rating Pelanggan
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="relative">
-            <img
-              src="hero.png"
-              alt="Anak-anak bermain"
-              className="rounded-lg shadow-lg"
-            />
-            <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg shadow-md flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-yellow-500 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-              <span className="font-semibold">Sertifikat SNI</span>
+            <div className="relative">
+              <img
+                src="hero.png"
+                alt="Anak-anak bermain"
+                className="rounded-lg shadow-lg"
+              />
+              <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg shadow-md flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-yellow-500 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+                <span className="font-semibold">Sertifikat SNI</span>
+              </div>
             </div>
           </div>
         </section>
+
         {/* Value Proposition Section */}
-        <section className="bg-gray-100 py-12 sm:py-16 lg:py-24 mt-12">
+        <section className="bg-gray-50/15 py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center my-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center my-8">
               Mengapa Mainan Edukasi?
             </h2>
-            <p className="text-gray-600 text-lg sm:text-xl lg:text-2xl font-light text-center mb-12">
+            <p className="text-gray-600 text-base sm:text-lg font-normal text-center mb-8">
               Berdasarkan penelitian terbaru, mainan edukasi terbukti
               meningkatkan kemampuan kognitif anak hingga 40% lebih efektif
               dibanding metode pembelajaran konvensional.
@@ -375,7 +378,168 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-        
+
+        {/* Koleksi Unggulan */}
+        <section className="bg-white py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-800 mb-4">
+              Koleksi Unggulan
+            </h2>
+            <p className="text-gray-500 text-base sm:text-lg text-center mb-6">
+              Produk-produk pilihan yang telah terbukti memberikan nilai edukasi
+              terbaik
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Card 1 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                <div className="relative w-full aspect-[3/2] overflow-hidden">
+                  <img
+                    src="masjid-al-aqsa.jpg"
+                    alt="Masjid Al-Aqsa"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  <div className="absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded bg-yellow-500">
+                    Best Seller
+                  </div>
+                </div>
+                <div className="p-4 flex flex-col gap-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Masjid Al-Aqsa
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 text-yellow-400 flex items-center justify-center rounded">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6 fill-current"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 font-semibold text-lg">
+                        4.9
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-700 mb-3">
+                    Rp 175.000
+                  </p>
+                  <div className="flex gap-2">
+                    <button className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded flex-1">
+                      Beli Sekarang
+                    </button>
+                    <a
+                      href="#"
+                      className="border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2 px-4 rounded flex-none"
+                    >
+                      Detail
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {/* Card 2 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                <div className="relative w-full aspect-[3/2] overflow-hidden">
+                  <img
+                    src="Advanced Robotics Kit.png"
+                    alt="Robotik Kit Advanced"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  <div className="absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded bg-green-500">
+                    STEM Choice
+                  </div>
+                </div>
+                <div className="p-4 flex flex-col gap-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Robotik Kit Advanced
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 text-yellow-400 flex items-center justify-center rounded">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6 fill-current"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 font-semibold text-lg">
+                        4.8
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-700 mb-3">
+                    Rp 1.899.000
+                  </p>
+                  <div className="flex gap-2">
+                    <button className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded flex-1">
+                      Beli Sekarang
+                    </button>
+                    <a
+                      href="#"
+                      className="border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2 px-4 rounded flex-none"
+                    >
+                      Detail
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {/* Card 3 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                <div className="relative w-full aspect-[3/2] overflow-hidden">
+                  <img
+                    src="Masjid Nabawi.jpg"
+                    alt="Masjid Nabawi"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  <div className="absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded bg-sky-500">
+                    New
+                  </div>
+                </div>
+                <div className="p-4 flex flex-col gap-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Masjid Nabawi
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 text-yellow-400 flex items-center justify-center rounded">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6 fill-current"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 font-semibold text-lg">
+                        4.9
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-700 mb-3">
+                    Rp 175.000
+                  </p>
+                  <div className="flex gap-2">
+                    <button className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded flex-1">
+                      Beli Sekarang
+                    </button>
+                    <a
+                      href="#"
+                      className="border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2 px-4 rounded flex-none"
+                    >
+                      Detail
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
